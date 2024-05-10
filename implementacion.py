@@ -20,10 +20,11 @@ class SistemaIoT:
             raise Exception("Esta clase es un singleton")
         self.datos_temporales = deque(maxlen=12)  # Datos de los últimos 60 segundos (12*5)
         self.cadena_manejo = CalculoEstadisticas(MediaDesviacionStrategy())
+        self.tiempo_inicial = time.time()
 
-    def procesar_dato(self, dato):
+    def procesar_dato(self, dato,tiempo_inicial):
         self.datos_temporales.append(dato)
-        self.cadena_manejo.manejar_dato(list(self.datos_temporales))
+        self.cadena_manejo.manejar_dato(list(self.datos_temporales), tiempo_inicial)
 
 # Observer
 class Sensor:
@@ -33,12 +34,12 @@ class Sensor:
     def registrar_observador(self, observador):
         self._observadores.append(observador)
 
-    def notificar_observadores(self, dato):
+    def notificar_observadores(self, dato, tiempo_inicial):
         for observador in self._observadores:
-            observador.procesar_dato(dato)
+            observador.procesar_dato(dato, tiempo_inicial)
 
-    def recibir_dato(self, dato):
-        self.notificar_observadores(dato)
+    def recibir_dato(self, dato, tiempo_inicial):
+        self.notificar_observadores(dato, tiempo_inicial)
 
 # Estrategias para cálculo de estadísticas
 class Estrategia(ABC):
@@ -47,8 +48,9 @@ class Estrategia(ABC):
         pass
 
 class MediaDesviacionStrategy(Estrategia):
-    def ejecutar(self, datos):
-        if len(datos)%12 == 0.00000000:
+        
+    def ejecutar(self, datos, tiempo_inicial):
+        if (time.time() - tiempo_inicial) %60 < 0.1:
             media = sum(d[1] for d in datos) / len(datos)
             desviacion = (sum((x[1] - media) ** 2 for x in datos) / len(datos)) ** 0.5
             print(f'Media: {media}, Desviación: {desviacion}')
@@ -80,8 +82,8 @@ class CalculoEstadisticas(Manejador):
         super().__init__(Umbral(25))
         self.estrategia = estrategia
 
-    def manejar_dato(self, datos):
-        self.estrategia.ejecutar(datos)
+    def manejar_dato(self, datos,tiempo_inicial):
+        self.estrategia.ejecutar(datos, tiempo_inicial)
         super().manejar_dato(datos)
 
 class Umbral(Manejador):
@@ -92,7 +94,7 @@ class Umbral(Manejador):
     def manejar_dato(self, datos):
         ultimo_dato = datos[-1][1] if datos else None
         if ultimo_dato and ultimo_dato > self.umbral:
-            print(f"Temperatura {ultimo_dato} por encima del umbral {self.umbral}.")
+            print(f"-La temperatura ha superado el umbral de {self.umbral} Cº.")
         super().manejar_dato(datos)
 
 class Aumento(Manejador):
@@ -108,7 +110,7 @@ class Aumento(Manejador):
                     temperatura_inicial = datos[i-1][1]
                     temperatura_final = datos[-1][1]
                     if temperatura_final - temperatura_inicial > self.incremento_maximo:
-                        print("Aumento significativo en la temperatura detectado.")
+                        print("-Aumento de +10Cº en los ultimos 30 segundos")
                         cortar = False
         super().manejar_dato(datos)
 import time
@@ -123,20 +125,24 @@ def main():
     sensor.registrar_observador(sistema)
 
     # Simulamos la recepción de datos de temperatura cada 5 segundos durante 2 minutos
-    tiempo_inicial = time.time()
+    tiempo_0 = time.time()
     ultimo_dato = 20  # Temperatura inicial
+    temperaturas = []
 
-    while time.time() - tiempo_inicial < 120:  # Simular durante 2 minutos
+    while time.time() - tiempo_0 < 120:  # Simular durante 2 minutos
         time.sleep(5) #para que empiece 
         # Generamos un cambio de temperatura entre -2 y +6 grados
         cambio = random.uniform(-2, 6)
         nuevo_dato = ultimo_dato + cambio
         dato = (time.time(), nuevo_dato)
-        print(f"Enviando nuevo dato de temperatura: {round(nuevo_dato,2)} grados.")
+       
+        temperaturas.append(nuevo_dato)
+        sensor.recibir_dato(dato, tiempo_0)
+        print(f"-La temparutra es: {round(nuevo_dato,2)} grados.")
         print("---------------------------------------------------------------")
-        sensor.recibir_dato(dato)
+
         ultimo_dato = nuevo_dato
         
-
+    print   (temperaturas)
 if __name__ == "__main__":
     main()
