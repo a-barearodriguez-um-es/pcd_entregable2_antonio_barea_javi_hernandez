@@ -105,16 +105,15 @@ class Aumento(Manejador):
         self.incremento_maximo = incremento_maximo
 
     def manejar_dato(self, datos, tiempo_inicial):
-        cortar = True   
-        if len(datos) >= 6 and cortar == True:
-            for i in range(len(datos)-5,len(datos)-1):
-                if cortar == True:
-                    temperatura_inicial = datos[i-1][1]
-                    temperatura_final = datos[-1][1]
-                    if temperatura_final - temperatura_inicial > self.incremento_maximo:
-                        print("-Aumento de +10Cº en los ultimos 30 segundos")
-                        cortar = False
+        if len(datos) > 1:  # Asegurarse de que haya al menos dos datos para comparar
+            temperatura_final = datos[-1][1]
+            # Encuentra la temperatura más baja en el rango considerado
+            temperatura_minima = min(dato[1] for dato in datos[max(0, len(datos) - 6):len(datos) - 1])
+            # Verificar si la temperatura final es al menos incremento_maximo unidades mayor que la temperatura mínima
+            if temperatura_final - temperatura_minima > self.incremento_maximo:
+                print("-Aumento de +10°C en los últimos 30 segundos")
         super().manejar_dato(datos, tiempo_inicial)
+
 import time
 
 # Definir las clases y funciones aquí...
