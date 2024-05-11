@@ -120,6 +120,7 @@ import time
 # Definir las clases y funciones aquí...
 
 def main():
+    print("Estrategias:", "\n", "1. Media y desviación estándar", "\n", "2. Cuantiles", "\n", "3. Mínimo y máximo")
     n = int(input("que estrategia quieres usar:"))
     if n ==1:
         estrategia = MediaDesviacionStrategy()
