@@ -12,9 +12,9 @@ from datetime import datetime, timedelta
 import numpy as np
 from statistics import mean, stdev
 from functools import reduce
+import time
 
-
-
+#------------------------- Clases ---------------------------#
 
 # Singleton
 class SistemaIoT:
@@ -127,9 +127,7 @@ class Aumento(Manejador):
                 print("-Aumento de +10°C en los últimos 30 segundos")
         super().manejar_dato(datos, tiempo_inicial)
 
-import time
 
-# Definir las clases y funciones aquí...
 
 def main():
     print("Estrategias:", "\n", "1. Media y desviación estándar", "\n", "2. Cuantiles", "\n", "3. Mínimo y máximo", "\n")
