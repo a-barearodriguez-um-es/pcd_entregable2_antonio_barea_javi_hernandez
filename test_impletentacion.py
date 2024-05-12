@@ -35,7 +35,7 @@ def test_media_desviacion_strategy():  # Prueba para la estrategia de cálculo d
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
         
-        mock_print.assert_called_with('Media: 25.0, Desviación: 4.08')
+        mock_print.assert_called_with(' Media: 25.0 \n Desviación: 4.08')
 
 def test_cuantiles_strategy():   # Prueba para la estrategia de cálculo de cuantiles
    
@@ -43,7 +43,7 @@ def test_cuantiles_strategy():   # Prueba para la estrategia de cálculo de cuan
     datos = [(0,0),(1, 10), (2, 20), (3, 30), (4, 40), (5, 50), (6, 60), (7, 70), (8, 80), (9, 90), (10, 100)]
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
-        mock_print.assert_called_with('Cuantil 25%: 25.0, Cuantil 75%: 75.0')
+        mock_print.assert_called_with(' Cuantil 25%: 25.0 \n Cuantil 75%: 75.0')
 
 def test_min_max_strategy():  # Prueba para la estrategia de cálculo de mínimo y máximo
     
@@ -51,7 +51,7 @@ def test_min_max_strategy():  # Prueba para la estrategia de cálculo de mínimo
     datos = [(1, 20), (2, 25), (3, 30), (4, 35)]
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
-        mock_print.assert_called_with('Mínimo: 20, Máximo: 35')
+        mock_print.assert_called_with(' Mínimo: 20 \n Máximo: 35')
 
 
 def test_aumento_datos_vacios():
