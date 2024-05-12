@@ -1,3 +1,9 @@
+############### Ejercicio de POO, P.funcional y Patrones de diseño con Python ###################
+####################### Grado en Ciencia e Ingenieria de Datos #######################
+
+
+#------------------------- Importaciones ---------------------------#
+
 import time
 import random
 from collections import deque
@@ -6,6 +12,9 @@ from datetime import datetime, timedelta
 import numpy as np
 from statistics import mean, stdev
 from functools import reduce
+
+
+
 
 # Singleton
 class SistemaIoT:
@@ -56,7 +65,7 @@ class MediaDesviacionStrategy(Estrategia):
         
         media = reduce(lambda x,y: x+y ,[d[1] for d in datos])/len(datos)
         desviacion = round( (sum((x[1] - media) ** 2 for x in datos) / len(datos)) ** 0.5 , 2)
-        print(f'Media: {media}, Desviación: {desviacion}')
+        print(f' Media: {media} \n Desviación: {desviacion}')
 
 class CuantilesStrategy(Estrategia):
     def ejecutar(self, datos):
@@ -64,13 +73,13 @@ class CuantilesStrategy(Estrategia):
         q1 = np.quantile(datos, 0.25)
         q3 = np.quantile(datos, 0.75)
         
-        print(f'Cuantil 25%: {q1}, Cuantil 75%: {q3}')
+        print(f' Cuantil 25%: {q1} \n Cuantil 75%: {q3}')
 
 class MinMaxStrategy(Estrategia):
     def ejecutar(self, datos):
         minimo = min(datos, key=lambda x: x[1])[1]
         maximo = max(datos, key=lambda x: x[1])[1]
-        print(f'Mínimo: {minimo}, Máximo: {maximo}')
+        print(f' Mínimo: {minimo} \n Máximo: {maximo}')
 
 # Chain of Responsibility
 class Manejador:
@@ -123,14 +132,17 @@ import time
 # Definir las clases y funciones aquí...
 
 def main():
-    print("Estrategias:", "\n", "1. Media y desviación estándar", "\n", "2. Cuantiles", "\n", "3. Mínimo y máximo")
-    n = int(input("que estrategia quieres usar:"))
+    print("Estrategias:", "\n", "1. Media y desviación estándar", "\n", "2. Cuantiles", "\n", "3. Mínimo y máximo", "\n")
+    n = int(input("¿Que estrategia quieres usar?:"))
     if n ==1:
         estrategia = MediaDesviacionStrategy()
     elif n==2:
         estrategia = CuantilesStrategy()
-    else:
+    elif n==3:
         estrategia = MinMaxStrategy()
+    else:
+        raise Exception("Estrategia no valida")
+
     sistema = SistemaIoT.obtener_instancia(estrategia)
     sensor = Sensor()
 
@@ -139,8 +151,10 @@ def main():
 
     # Simulamos la recepción de datos de temperatura cada 5 segundos durante 2 minutos
     ultimo_dato = 20  # Temperatura inicial
-    temperaturas = []
-    tiempo_ejecucion = int(input("cuanto tiempo quieres que dure la simulacion: "))
+
+    tiempo_ejecucion = int(input("¿Cuantos segundos quieres que dure la simulacion?: "))
+    if tiempo_ejecucion < 0: raise ValueError("El tiempo no puede ser negativo")
+    print("\n", "--------------------", "\n", "Simulacion iniciada", "\n", "--------------------")
     tiempo_0 = time.time()
 
     while time.time() - tiempo_0 < tiempo_ejecucion:  # Simular durante 2 minutos
@@ -150,13 +164,24 @@ def main():
         nuevo_dato = ultimo_dato + cambio
         dato = (time.time(), nuevo_dato)
        
-        temperaturas.append(nuevo_dato)
         sensor.recibir_dato(dato, tiempo_0)
         print(f"-La temparutra es: {round(nuevo_dato,2)} grados. Han pasado {int(time.time()-tiempo_0)} segundos.")
         print("---------------------------------------------------------------")
 
         ultimo_dato = nuevo_dato
         
-    print   (temperaturas)
+    
 if __name__ == "__main__":
     main()
+
+
+ #-------------------------------------------------------------- #
+ 
+
+       
+                                # AUTORES #
+
+#                                 Antonio Barea Rodríguez: a.barearodriguez@um.es
+#                                 Javier Hernandez Rosique: javier.hernandezr@um.es
+
+#  Copyright (c) All rights reserved.
