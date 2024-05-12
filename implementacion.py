@@ -59,7 +59,7 @@ class Estrategia(ABC):
     def ejecutar(self, datos):
         pass
 
-class MediaDesviacionStrategy(Estrategia):
+class MediaDesviacionStrategy(Estrategia): # Calculamos media y desviacion
         
     def ejecutar(self, datos):
         
@@ -67,7 +67,7 @@ class MediaDesviacionStrategy(Estrategia):
         desviacion = round( (sum((x[1] - media) ** 2 for x in datos) / len(datos)) ** 0.5 , 2)
         print(f' Media: {media} \n Desviación: {desviacion}')
 
-class CuantilesStrategy(Estrategia):
+class CuantilesStrategy(Estrategia): # Calculamos los cuantiles
     def ejecutar(self, datos):
         datos = sorted([d[1] for d in datos])
         q1 = np.quantile(datos, 0.25)
@@ -75,7 +75,7 @@ class CuantilesStrategy(Estrategia):
         
         print(f' Cuantil 25%: {q1} \n Cuantil 75%: {q3}')
 
-class MinMaxStrategy(Estrategia):
+class MinMaxStrategy(Estrategia): # Calculamos la temperatura maxima y minima de los ultimos 60 segundos
     def ejecutar(self, datos):
         minimo = min(datos, key=lambda x: x[1])[1]
         maximo = max(datos, key=lambda x: x[1])[1]
@@ -92,7 +92,7 @@ class Manejador:
 
 class CalculoEstadisticas(Manejador):
     def __init__(self, estrategia):
-        super().__init__(Umbral(25))
+        super().__init__(Umbral(25))  # Definimos el umbral
         self.estrategia = estrategia
  
     def manejar_dato(self, datos,tiempo_inicial):
@@ -101,12 +101,12 @@ class CalculoEstadisticas(Manejador):
             self.estrategia.ejecutar(datos)
         super().manejar_dato(datos, tiempo_inicial)
 
-class Umbral(Manejador):
+class Umbral(Manejador): 
     def __init__(self, umbral):
         super().__init__(Aumento(10))
         self.umbral = umbral
 
-    def manejar_dato(self, datos, tiempo_inicial):
+    def manejar_dato(self, datos, tiempo_inicial): # Comprobamos que temperatura no supere el umbral
         ultimo_dato = datos[-1][1] if datos else None
         if ultimo_dato and ultimo_dato > self.umbral:
             print(f"-La temperatura ha superado el umbral de {self.umbral} Cº.")
@@ -122,7 +122,7 @@ class Aumento(Manejador):
             temperatura_final = datos[-1][1]
             # Encuentra la temperatura más baja en el rango considerado
             temperatura_minima = min(dato[1] for dato in datos[max(0, len(datos) - 6):len(datos) - 1])
-            # Verificar si la temperatura final es al menos incremento_maximo unidades mayor que la temperatura mínima
+            # Verifica si la temperatura final es al menos incremento_maximo unidades mayor que la temperatura mínima
             if temperatura_final - temperatura_minima > self.incremento_maximo:
                 print("-Aumento de +10°C en los últimos 30 segundos")
         super().manejar_dato(datos, tiempo_inicial)
@@ -167,7 +167,8 @@ def main():
         print("---------------------------------------------------------------")
 
         ultimo_dato = nuevo_dato
-        
+    
+    print("\n", "--------------------", "\n", "Simulacion finalizada", "\n", "--------------------")
     
 if __name__ == "__main__":
     main()
