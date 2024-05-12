@@ -3,7 +3,9 @@ import random
 from collections import deque
 from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-
+import numpy as np
+from statistics import mean, stdev
+from functools import reduce
 
 # Singleton
 class SistemaIoT:
@@ -51,15 +53,17 @@ class Estrategia(ABC):
 class MediaDesviacionStrategy(Estrategia):
         
     def ejecutar(self, datos):
-        media = sum(d[1] for d in datos) / len(datos)
-        desviacion = (sum((x[1] - media) ** 2 for x in datos) / len(datos)) ** 0.5
+        
+        media = reduce(lambda x,y: x+y ,[d[1] for d in datos])/len(datos)
+        desviacion = round( (sum((x[1] - media) ** 2 for x in datos) / len(datos)) ** 0.5 , 2)
         print(f'Media: {media}, Desviación: {desviacion}')
 
 class CuantilesStrategy(Estrategia):
     def ejecutar(self, datos):
         datos = sorted([d[1] for d in datos])
-        q1 = datos[len(datos) // 4]
-        q3 = datos[len(datos) * 3 // 4]
+        q1 = np.quantile(datos, 0.25)
+        q3 = np.quantile(datos, 0.75)
+        
         print(f'Cuantil 25%: {q1}, Cuantil 75%: {q3}')
 
 class MinMaxStrategy(Estrategia):
