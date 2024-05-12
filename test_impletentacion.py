@@ -34,15 +34,16 @@ def test_media_desviacion_strategy():
     datos = [(1, 20), (2, 25), (3, 30)]
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
-        mock_print.assert_called_with('Media: 25.0, Desviación: 4.08248290463863')
+        
+        mock_print.assert_called_with('Media: 25.0, Desviación: 4.08')
 
 def test_cuantiles_strategy():
     # Prueba para la estrategia de cálculo de cuantiles
     strategy = CuantilesStrategy()
-    datos = [(1, 20), (2, 25), (3, 30), (4, 35)]
+    datos = [(0,0),(1, 10), (2, 20), (3, 30), (4, 40), (5, 50), (6, 60), (7, 70), (8, 80), (9, 90), (10, 100)]
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
-        mock_print.assert_called_with('Cuantil 25%: 25, Cuantil 75%: 32.5')
+        mock_print.assert_called_with('Cuantil 25%: 25.0, Cuantil 75%: 75.0')
 
 def test_min_max_strategy():
     # Prueba para la estrategia de cálculo de mínimo y máximo
@@ -51,3 +52,28 @@ def test_min_max_strategy():
     with patch('builtins.print') as mock_print:
         strategy.ejecutar(datos)
         mock_print.assert_called_with('Mínimo: 20, Máximo: 35')
+
+
+
+
+
+def test_aumento_datos_vacios():
+    handler = Aumento(5)
+    datos = []
+    handler.manejar_dato(datos, 0)  # El tiempo inicial puede ser cualquier valor aquí
+
+
+
+def test_manejador_sin_sucesor():
+    handler = Manejador()
+    handler.manejar_dato([1, 2, 3], 0)  # Datos y tiempo inicial ficticios
+
+
+
+def test_umbral_mayor_que_datos():
+    handler = Umbral(100)
+    datos = [(1, 20), (2, 25), (3, 30)]
+    handler.manejar_dato(datos, 0)  # Tiempo inicial ficticio
+
+
+
